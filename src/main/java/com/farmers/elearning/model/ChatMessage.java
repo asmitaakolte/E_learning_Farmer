@@ -3,6 +3,8 @@ package com.farmers.elearning.model;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 @Entity
 public class ChatMessage {
 
@@ -10,10 +12,12 @@ public class ChatMessage {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @JsonBackReference("senderReference") 
     @ManyToOne
     @JoinColumn(name = "sender_id", nullable = false)
     private User sender;
 
+    @JsonBackReference("receiverReference") 
     @ManyToOne
     @JoinColumn(name = "receiver_id", nullable = false)
     private User receiver;

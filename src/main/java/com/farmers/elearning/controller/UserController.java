@@ -2,16 +2,16 @@ package com.farmers.elearning.controller;
 
 import com.farmers.elearning.model.Crop;
 import com.farmers.elearning.model.User;
+import com.farmers.elearning.model.Views;
 import com.farmers.elearning.model.YouTube;
 import com.farmers.elearning.model.Article;
-import com.farmers.elearning.model.Course;
-import com.farmers.elearning.repository.UserRepository;
 import com.farmers.elearning.repository.CropRepository;
+import com.farmers.elearning.repository.UserRepository;
 import com.farmers.elearning.repository.YoutubeRepository;
+import com.fasterxml.jackson.annotation.JsonView;
 import com.farmers.elearning.repository.ArticleRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
@@ -97,6 +97,7 @@ public class UserController {
     }
 
     // ✅ Assign Crops to User
+    @JsonView(Views.Public.class)
     @PostMapping("/{id}/crops")
     public User assignCropsToUser(@PathVariable Long id, @RequestBody List<Long> cropIds) {
         User user = userRepository.findById(id).orElse(null);
@@ -106,6 +107,19 @@ public class UserController {
             return userRepository.save(user);
         }
         return null;
+    }
+
+    @PostMapping("/login")
+    public User login(@RequestBody User loginUser) {
+        // Check if the user with the given username exists
+        User user = userRepository.findByUsername(loginUser.getUsername());
+
+        if (user.getPassword().equals(loginUser.getPassword())) {
+            // Successfully authenticated, return the user object
+            return user;
+        } else {
+            throw new RuntimeException("Invalid username or password");
+        }
     }
 
 }

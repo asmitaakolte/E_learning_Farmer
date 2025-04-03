@@ -3,11 +3,16 @@ package com.farmers.elearning.model;
 import jakarta.persistence.*;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonView;
+
 @Entity
 public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+     @JsonView(Views.Public.class)
     private Long id;
 
     @Column(unique = true, nullable = false)
@@ -100,6 +105,7 @@ public class User {
         return interests;
     }
 
+    
     public void setInterests(List<Interest> interests) {
         this.interests = interests;
     }
@@ -119,10 +125,12 @@ public class User {
         this.crops = crops;
     }
 
+    @JsonManagedReference("senderReference")
     // New fields for messaging system
     @OneToMany(mappedBy = "sender", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ChatMessage> sentMessages;
 
+    @JsonManagedReference("receiverReference")
     @OneToMany(mappedBy = "receiver", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ChatMessage> receivedMessages;
 
